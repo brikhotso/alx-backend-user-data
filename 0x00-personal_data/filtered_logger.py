@@ -61,19 +61,21 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     The connection details are retrieved from environment variables.
 
     Returns:
-        mysql.connector.connection.MySQLConnection: A MySQL connection object.
+    mysql.connector.connection.MySQLConnection: A MySQL connection object.
     """
     username = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
     password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
     host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
     db_name = environ.get("PERSONAL_DATA_DB_NAME")
 
-    cnx = mysql.connector.connection.MySQLConnection(user=username,
-                                                     password=password,
-                                                     port=3306,
-                                                     host=host,
-                                                     database=db_name)
-    return cnx
+    db_connection = mysql.connector.connect(
+        user=username,
+        password=password,
+        port=3306,
+        host=host,
+        database=db_name,
+    )
+    return db_connection
 
 
 def main():
