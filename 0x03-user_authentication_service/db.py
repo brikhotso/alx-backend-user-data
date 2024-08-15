@@ -34,31 +34,14 @@ class DB:
 
     def add_user(self, email: str, hashed_password: str) -> User:
         """Add a new user to the database
-
-        Args:
-            email (str): The user's email address
-            hashed_password (str): The user's hashed password
-
-        Returns:
-            User: The newly created User object
         """
         new_user = User(email=email, hashed_password=hashed_password)
         self._session.add(new_user)
         self._session.commit()
         return new_user
-    
+
     def find_user_by(self, **kwargs) -> User:
         """Find a user by arbitrary keyword arguments
-
-        Args:
-            **kwargs: Keyword arguments to filter the users table
-
-        Returns:
-            User: The first user matching the filter criteria
-
-        Raises:
-            NoResultFound: If no user is found matching the filter criteria
-            InvalidRequestError: If invalid query arguments are passed
         """
         try:
             user = self._session.query(User).filter_by(**kwargs).one()
@@ -67,4 +50,13 @@ class DB:
             raise NoResultFound()
         except Exception as e:
             raise InvalidRequestError()
-        
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """method to update user"""
+        user = self.find_user_by(id=user_id)
+        for key, value in kwargs.items():
+            if hasattr(user, key):
+                setattr(user, key, value)
+            else:
+                raise ValueError()
+        self._session.commit()
